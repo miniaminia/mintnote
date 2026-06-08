@@ -223,7 +223,7 @@ export default function Home() {
     setDailyChecks(newChecks);
     await supabase.from('daily_checks').upsert({ date: today, checks: newChecks });
 
-    if (checkItems.every((c) => newChecks[c.id])) {
+    if (Object.values(newChecks).filter(Boolean).length >= 10) {
       const { data: reward } = await supabase
         .from('daily_rewards')
         .select('rewarded')
@@ -232,7 +232,7 @@ export default function Home() {
       if (!reward?.rewarded) {
         await incrementSticker();
         await supabase.from('daily_rewards').upsert({ date: today, rewarded: true });
-        showToast('🌟 체크리스트 완성! 스티커 +1');
+        showToast('🌟 10개 달성! 스티커 +1');
       }
     }
   };
