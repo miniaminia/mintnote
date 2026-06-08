@@ -1,22 +1,37 @@
 import type { CheckItem, RoadmapStep } from '@/types';
 
 export const SCHEDULE = [
-  { time: '09:00', name: '하루 계획 쓰기' },
-  { time: '09:15', name: '수학 공부' },
-  { time: '10:15', name: '휴식' },
-  { time: '10:30', name: '국어 / 독서' },
-  { time: '11:30', name: '점심 + 자유시간' },
-  { time: '12:30', name: '과학 / 복습' },
-  { time: '13:30', name: '링피트 1시간' },
-  { time: '14:30', name: '오늘 한 줄 기록' },
-  { time: '15:00', name: '끝!' },
+  { time: '기상', name: '양압기 정리' },
+  { time: '기상', name: '눈뜨스' },
+  { time: '출근 후', name: '모닝페이지' },
+  { time: '출근 후', name: '몰입노트' },
+  { time: '출근 후', name: '확언쓰기' },
+  { time: '출근 후', name: '책읽기' },
+  { time: '점심', name: '낮잠' },
+  { time: '점심', name: '걷기' },
+  { time: '오후 1', name: '노션 정리' },
+  { time: '오후 1', name: '사진 업로드' },
+  { time: '오후 1', name: 'PMS 확인' },
+  { time: '오후 1', name: '이닦기' },
+  { time: '오후 2', name: '위너루틴' },
+  { time: '오후 2', name: '책상닦기' },
+  { time: '오후 2', name: '블로깅' },
+  { time: '퇴근 후', name: '운동' },
+  { time: '퇴근 후', name: '씻기' },
+  { time: '퇴근 후', name: '내일 준비' },
 ];
 
 export const DEFAULT_CHECKS: CheckItem[] = [
-  { id: 'math', label: '수학', sort_order: 0 },
-  { id: 'korean', label: '국어', sort_order: 1 },
-  { id: 'science', label: '과학', sort_order: 2 },
-  { id: 'ringfit', label: '링피트 1시간', sort_order: 3 },
+  { id: 'cpap', label: '양압기 정리', sort_order: 0 },
+  { id: 'morning_pages', label: '모닝페이지', sort_order: 1 },
+  { id: 'focus_note', label: '몰입노트', sort_order: 2 },
+  { id: 'affirm', label: '확언쓰기', sort_order: 3 },
+  { id: 'reading', label: '책읽기', sort_order: 4 },
+  { id: 'walk', label: '걷기', sort_order: 5 },
+  { id: 'notion', label: '노션 정리', sort_order: 6 },
+  { id: 'blog', label: '블로깅', sort_order: 7 },
+  { id: 'exercise', label: '운동', sort_order: 8 },
+  { id: 'tomorrow_prep', label: '내일 준비', sort_order: 9 },
 ];
 
 export const DEFAULT_ROADMAP: RoadmapStep[] = [
