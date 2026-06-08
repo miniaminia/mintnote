@@ -11,15 +11,24 @@ export const SCHEDULE = [
 
 export const DEFAULT_CHECKS: CheckItem[] = [
   { id: 'cpap', label: '양압기 정리', sort_order: 0 },
-  { id: 'morning_pages', label: '모닝페이지', sort_order: 1 },
-  { id: 'focus_note', label: '몰입노트', sort_order: 2 },
-  { id: 'affirm', label: '확언쓰기', sort_order: 3 },
-  { id: 'reading', label: '책읽기', sort_order: 4 },
-  { id: 'walk', label: '걷기', sort_order: 5 },
-  { id: 'notion', label: '노션 정리', sort_order: 6 },
-  { id: 'blog', label: '블로깅', sort_order: 7 },
-  { id: 'exercise', label: '운동', sort_order: 8 },
-  { id: 'tomorrow_prep', label: '내일 준비', sort_order: 9 },
+  { id: 'nuntteus', label: '눈뜨스', sort_order: 1 },
+  { id: 'morning_pages', label: '모닝페이지', sort_order: 2 },
+  { id: 'focus_note', label: '몰입노트', sort_order: 3 },
+  { id: 'affirm', label: '확언쓰기', sort_order: 4 },
+  { id: 'reading', label: '책읽기', sort_order: 5 },
+  { id: 'nap', label: '낮잠', sort_order: 6 },
+  { id: 'walk', label: '걷기', sort_order: 7 },
+  { id: 'notion', label: '노션 정리', sort_order: 8 },
+  { id: 'photo', label: '사진 업로드', sort_order: 9 },
+  { id: 'pms', label: 'PMS 확인', sort_order: 10 },
+  { id: 'brush', label: '이닦기', sort_order: 11 },
+  { id: 'winner', label: '위너루틴', sort_order: 12 },
+  { id: 'desk', label: '책상닦기', sort_order: 13 },
+  { id: 'blog', label: '블로깅', sort_order: 14 },
+  { id: 'tumbler', label: '텀블러 씻기', sort_order: 15 },
+  { id: 'exercise', label: '운동', sort_order: 16 },
+  { id: 'shower', label: '씻기', sort_order: 17 },
+  { id: 'tomorrow_prep', label: '내일 준비', sort_order: 18 },
 ];
 
 export const DEFAULT_ROADMAP: RoadmapStep[] = [
