@@ -1,24 +1,12 @@
 import type { CheckItem, RoadmapStep } from '@/types';
 
 export const SCHEDULE = [
-  { time: '기상', name: '양압기 정리' },
-  { time: '기상', name: '눈뜨스' },
-  { time: '출근 후', name: '모닝페이지' },
-  { time: '출근 후', name: '몰입노트' },
-  { time: '출근 후', name: '확언쓰기' },
-  { time: '출근 후', name: '책읽기' },
-  { time: '점심', name: '낮잠' },
-  { time: '점심', name: '걷기' },
-  { time: '오후 1', name: '노션 정리' },
-  { time: '오후 1', name: '사진 업로드' },
-  { time: '오후 1', name: 'PMS 확인' },
-  { time: '오후 1', name: '이닦기' },
-  { time: '오후 2', name: '위너루틴' },
-  { time: '오후 2', name: '책상닦기' },
-  { time: '오후 2', name: '블로깅' },
-  { time: '퇴근 후', name: '운동' },
-  { time: '퇴근 후', name: '씻기' },
-  { time: '퇴근 후', name: '내일 준비' },
+  { time: '기상', tasks: ['양압기 정리', '눈뜨스'] },
+  { time: '출근 후', tasks: ['모닝페이지', '몰입노트', '확언쓰기', '책읽기'] },
+  { time: '점심', tasks: ['낮잠', '걷기'] },
+  { time: '오후 1', tasks: ['노션 정리', '사진 업로드', 'PMS 확인', '이닦기'] },
+  { time: '오후 2', tasks: ['위너루틴', '책상닦기', '블로깅'] },
+  { time: '퇴근 후', tasks: ['운동', '씻기', '내일 준비'] },
 ];
 
 export const DEFAULT_CHECKS: CheckItem[] = [

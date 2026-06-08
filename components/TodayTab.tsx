@@ -46,9 +46,6 @@ export default function TodayTab({
     if (e.key === 'Enter') handleAddCheck();
   };
 
-  const now = new Date();
-  const nowMin = now.getHours() * 60 + now.getMinutes();
-
   return (
     <>
       <div className="today-date-banner">
@@ -62,18 +59,13 @@ export default function TodayTab({
           <span className="section-label">시간표</span>
         </div>
         <div className="schedule-list">
-          {SCHEDULE.map((s) => {
-            const [h, m] = s.time.split(':').map(Number);
-            const sMin = h * 60 + m;
-            const isActive = Math.abs(sMin - nowMin) < 90;
-            return (
-              <div className="schedule-row" key={s.time}>
-                <span className="schedule-time">{s.time}</span>
-                <span className={`schedule-dot${isActive ? ' active' : ''}`} />
-                <span className="schedule-name">{s.name}</span>
-              </div>
-            );
-          })}
+          {SCHEDULE.map((s) => (
+            <div className="schedule-row" key={s.time}>
+              <span className="schedule-time">{s.time}</span>
+              <span className="schedule-dot" />
+              <span className="schedule-name">{s.tasks.join('. ')}</span>
+            </div>
+          ))}
         </div>
       </div>
 
