@@ -45,6 +45,20 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 자정 넘으면 체크리스트 자동 리셋
+  useEffect(() => {
+    let loadedDate = todayKey();
+    const interval = setInterval(() => {
+      const currentDate = todayKey();
+      if (currentDate !== loadedDate) {
+        loadedDate = currentDate;
+        setDailyChecks({});
+        setMemo('');
+      }
+    }, 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   async function loadAll() {
     const today = todayKey();
 
