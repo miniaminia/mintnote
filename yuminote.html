@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>유미노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mint: #4ECDC4;
+  --mint-light: #E8FAF9;
+  --mint-mid: #B2EAE7;
+  --bg: #F7F8FA;
+  --white: #FFFFFF;
+  --text: #1A1A2E;
+  --text-sub: #6B7280;
+  --text-hint: #B0B7C3;
+  --border: #EAECF0;
+  --safe-top: env(safe-area-inset-top, 54px);
+  --safe-bot: env(safe-area-inset-bottom, 34px);
+  --tab-h: 60px;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  max-width: 430px; /* iPhone 14 Pro 너비 */
+  margin: 0 auto;
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── 상태바 여백 ── */
+.status-bar {
+  height: var(--safe-top);
+  background: var(--white);
+  min-height: 54px;
+}
+
+/* ── 헤더 ── */
+.header {
+  background: var(--white);
+  padding: 12px 20px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--mint);
+  letter-spacing: -0.5px;
+}
+
+.header-date {
+  font-size: 12px;
+  color: var(--text-sub);
+  font-weight: 400;
+}
+
+/* ── 스크롤 영역 ── */
+.scroll-area {
+  height: calc(100dvh - var(--safe-top) - 56px - var(--tab-h) - var(--safe-bot));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+  padding-bottom: 16px;
+}
+
+/* ── 탭 화면 ── */
+.tab-screen { display: none; }
+.tab-screen.active { display: block; }
+
+/* ── 섹션 ── */
+.section {
+  background: var(--white);
+  margin: 12px 16px 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.section-header {
+  padding: 14px 16px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-sub);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+/* ── 오늘 탭 ── */
+.today-date-banner {
+  margin: 12px 16px 0;
+  background: var(--mint);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  color: white;
+}
+
+.today-weekday {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.8;
+  margin-bottom: 2px;
+}
+
+.today-date-big {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* 시간표 블록 */
+.schedule-list { padding: 0 16px 14px; }
+
+.schedule-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.schedule-row:last-child { border-bottom: none; }
+
+.schedule-time {
+  font-size: 11px;
+  color: var(--text-hint);
+  font-weight: 400;
+  min-width: 52px;
+}
+
+.schedule-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mint-mid);
+  flex-shrink: 0;
+}
+
+.schedule-dot.active { background: var(--mint); }
+
+.schedule-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* 체크리스트 */
+.checklist { padding: 0 16px 14px; }
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: opacity .15s;
+}
+
+.check-item:last-child { border-bottom: none; }
+
+.check-item:active { opacity: 0.6; }
+
+.check-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+}
+
+.check-box.checked {
+  background: var(--mint);
+  border-color: var(--mint);
+}
+
+.check-box.checked::after {
+  content: '';
+  width: 5px;
+  height: 9px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(45deg) translate(-1px, -1px);
+  display: block;
+}
+
+.check-label {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text);
+  transition: color .2s;
+}
+
+.check-item.done .check-label {
+  color: var(--text-hint);
+  text-decoration: line-through;
+  text-decoration-color: var(--mint-mid);
+}
+
+.check-sub {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-hint);
+}
+
+.check-delete {
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  color: var(--text-hint);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: color .15s;
+}
+.check-delete:active { color: #FF6B6B; }
+
+.check-add-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.check-add-input {
+  flex: 1;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color .2s;
+}
+.check-add-input:focus { border-color: var(--mint); }
+.check-add-input::placeholder { color: var(--text-hint); }
+
+.check-add-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--mint);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity .15s;
+}
+.check-add-btn:active { opacity: 0.75; }
+
+/* 한 줄 메모 */
+.memo-wrap { padding: 0 16px 14px; }
+
+.memo-input {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  resize: none;
+  outline: none;
+  transition: border-color .2s;
+  line-height: 1.5;
+}
+
+.memo-input:focus { border-color: var(--mint); }
+.memo-input::placeholder { color: var(--text-hint); }
+
+.memo-save-btn {
+  margin-top: 8px;
+  width: 100%;
+  background: var(--mint);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+
+.memo-save-btn:active { opacity: 0.75; }
+
+/* ── 기록 탭 ── */
+/* 달력 */
+.calendar-wrap { padding: 0 16px 16px; }
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+}
+
+.cal-month {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.cal-nav-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: var(--bg);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-sub);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-day-label {
+  font-size: 11px;
+  color: var(--text-hint);
+  text-align: center;
+  padding: 4px 0;
+  font-weight: 400;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+
+.cal-day.done {
+  background: var(--mint);
+  color: white;
+  font-weight: 700;
+}
+
+.cal-day.today {
+  border: 1.5px solid var(--mint);
+  color: var(--mint);
+  font-weight: 700;
+}
+
+.cal-day.done.today {
+  background: var(--mint);
+  color: white;
+  border: none;
+}
+
+.cal-day.off {
+  color: var(--text-hint);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.cal-day.empty { pointer-events: none; }
+
+/* 기록 목록 */
+.record-list { padding: 0 16px 14px; }
+
+.record-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.record-item:last-child { border-bottom: none; }
+
+.record-date {
+  font-size: 11px;
+  color: var(--text-hint);
+  font-weight: 400;
+  min-width: 36px;
+  padding-top: 1px;
+}
+
+.record-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mint);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.record-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  flex: 1;
+}
+
+/* ── 수학 탭 ── */
+/* 로드맵 */
+.roadmap-list { padding: 0 16px 14px; }
+
+.roadmap-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.roadmap-item:last-child { border-bottom: none; }
+
+.roadmap-step {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-hint);
+  flex-shrink: 0;
+  transition: all .2s;
+}
+
+.roadmap-step.current {
+  background: var(--mint);
+  color: white;
+}
+
+.roadmap-step.done {
+  background: var(--mint-light);
+  color: var(--mint);
+}
+
+.roadmap-info { flex: 1; }
+
+.roadmap-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.roadmap-title.dim { color: var(--text-hint); }
+
+.roadmap-period {
+  font-size: 11px;
+  color: var(--text-hint);
+  margin-top: 1px;
+}
+
+.roadmap-check {
+  font-size: 16px;
+  color: var(--mint);
+}
+
+/* 문제집 진도 */
+.progress-wrap { padding: 0 16px 14px; }
+
+.progress-book-label {
+  font-size: 12px;
+  color: var(--text-sub);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.progress-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.progress-input-label {
+  font-size: 13px;
+  color: var(--text-sub);
+  white-space: nowrap;
+}
+
+.page-input {
+  width: 72px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--mint);
+  background: var(--mint-light);
+  outline: none;
+  text-align: center;
+  transition: border-color .2s;
+}
+
+.page-input:focus { border-color: var(--mint); }
+
+.page-save-btn {
+  flex: 1;
+  background: var(--mint);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+
+.page-save-btn:active { opacity: 0.75; }
+
+.progress-bar-wrap { margin-bottom: 6px; }
+
+.progress-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-sub);
+  margin-bottom: 6px;
+}
+
+.progress-bar-track {
+  height: 8px;
+  background: var(--bg);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--mint);
+  border-radius: 99px;
+  transition: width .4s ease;
+}
+
+.page-log { margin-top: 10px; }
+
+.page-log-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-sub);
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-log-item:last-child { border-bottom: none; }
+
+.goal-edit-input {
+  width: 60px;
+  border: none;
+  border-bottom: 1.5px solid var(--mint);
+  background: transparent;
+  font-size: 12px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--mint);
+  font-weight: 700;
+  outline: none;
+  text-align: right;
+  padding: 0 2px;
+}
+
+.page-log-val { color: var(--mint); font-weight: 700; }
+
+/* 스티커 */
+.sticker-wrap { padding: 0 16px 14px; }
+
+.sticker-count-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.sticker-count-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--mint);
+}
+
+.sticker-count-total {
+  font-size: 14px;
+  color: var(--text-hint);
+}
+
+.sticker-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.sticker-cell {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  background: var(--mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: transform .1s;
+}
+
+.sticker-cell:active { transform: scale(0.92); }
+
+.sticker-cell.empty {
+  background: var(--bg);
+  border: 1.5px dashed var(--border);
+  font-size: 0;
+}
+
+.reward-next {
+  background: var(--mint-light);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reward-icon { font-size: 20px; }
+
+.reward-info {}
+
+.reward-label {
+  font-size: 11px;
+  color: var(--mint);
+  font-weight: 700;
+  margin-bottom: 1px;
+}
+
+.reward-desc {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.roadmap-title-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1.5px solid var(--mint);
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  outline: none;
+  padding: 2px 0;
+  min-width: 0;
+}
+
+.roadmap-period-edit {
+  border: none;
+  border-bottom: 1.5px solid var(--mint);
+  background: transparent;
+  font-size: 11px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text-sub);
+  outline: none;
+  padding: 1px 0;
+  width: 56px;
+  text-align: center;
+}
+
+.roadmap-edit-btn {
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  color: var(--text-hint);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: color .15s;
+}
+.roadmap-edit-btn:active { color: var(--mint); }
+
+.roadmap-add-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.roadmap-add-input {
+  flex: 1;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color .2s;
+}
+.roadmap-add-input:focus { border-color: var(--mint); }
+.roadmap-add-input::placeholder { color: var(--text-hint); }
+
+.roadmap-period-input {
+  width: 68px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 8px;
+  font-size: 13px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text-sub);
+  background: var(--bg);
+  outline: none;
+  text-align: center;
+  transition: border-color .2s;
+}
+.roadmap-period-input:focus { border-color: var(--mint); }
+.roadmap-period-input::placeholder { color: var(--text-hint); }
+
+.roadmap-add-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--mint);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity .15s;
+}
+.roadmap-add-btn:active { opacity: 0.75; }
+
+/* ── 하단 탭바 ── */
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding-bottom: var(--safe-bot);
+  z-index: 20;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+
+.tab-btn:active { opacity: 0.6; }
+
+.tab-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-hint);
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.tab-btn.active .tab-label { color: var(--mint); font-weight: 700; }
+
+/* 토스트 */
+.toast {
+  position: fixed;
+  bottom: calc(var(--tab-h) + var(--safe-bot) + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: rgba(26,26,46,0.88);
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 99px;
+  white-space: nowrap;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 99;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* 동적 섬 여백 (iPhone 14 Pro) */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .status-bar { height: max(env(safe-area-inset-top), 54px); }
+}
+</style>
+</head>
+<body>
+
+<div class="status-bar"></div>
+
+<!-- 헤더 -->
+<div class="header">
+  <div class="header-logo">유미노트</div>
+  <div class="header-date" id="headerDate"></div>
+</div>
+
+<!-- ═══════════════════════════════ 오늘 탭 -->
+<div class="tab-screen active scroll-area" id="screen-today">
+
+  <div class="today-date-banner">
+    <div class="today-weekday" id="todayWeekday"></div>
+    <div class="today-date-big" id="todayDateBig"></div>
+  </div>
+
+  <!-- 시간표 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label">시간표</span>
+    </div>
+    <div class="schedule-list" id="scheduleList"></div>
+  </div>
+
+  <!-- 체크리스트 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label">체크리스트</span>
+    </div>
+    <div class="checklist" id="checklist"></div>
+    <div class="check-add-row">
+      <input class="check-add-input" id="checkAddInput" type="text" placeholder="할 일 추가..." maxlength="30">
+      <button class="check-add-btn" onclick="addCheckItem()">+</button>
+    </div>
+  </div>
+
+  <!-- 한 줄 메모 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label">오늘 한 줄</span>
+    </div>
+    <div class="memo-wrap">
+      <textarea class="memo-input" id="memoInput" rows="2" placeholder="오늘 하루 한 줄로 남겨봐..."></textarea>
+      <button class="memo-save-btn" onclick="saveMemo()">저장</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ 기록 탭 -->
+<div class="tab-screen scroll-area" id="screen-record">
+
+  <!-- 달력 -->
+  <div class="section">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+      <div class="cal-month" id="calMonthLabel"></div>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="calendar-wrap">
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+  </div>
+
+  <!-- 기록 목록 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label">한 줄 기록</span>
+    </div>
+    <div class="record-list" id="recordList"></div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ 수학 탭 -->
+<div class="tab-screen scroll-area" id="screen-math">
+
+  <!-- 로드맵 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label">로드맵</span>
+    </div>
+    <div class="roadmap-list" id="roadmapList"></div>
+    <div class="roadmap-add-row">
+      <input class="roadmap-add-input" id="roadmapTitleInput" type="text" placeholder="단원 이름 (예: 분수 약분)" maxlength="20">
+      <input class="roadmap-period-input" id="roadmapPeriodInput" type="text" placeholder="기간" maxlength="8">
+      <button class="roadmap-add-btn" onclick="addRoadmapStep()">+</button>
+    </div>
+  </div>
+
+  <!-- 문제집 진도 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label">문제집 진도</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-book-label" id="currentBookLabel"></div>
+      <div class="progress-input-row">
+        <span class="progress-input-label">오늘 푼 쪽</span>
+        <input class="page-input" id="pageInput" type="number" min="1" max="999" placeholder="0">
+        <button class="page-save-btn" onclick="savePages()">기록</button>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-label">
+          <span id="progressText">누적 0p</span>
+          <span id="progressGoal">목표 50p</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="page-log" id="pageLog"></div>
+    </div>
+  </div>
+
+  <!-- 스티커 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label">스티커</span>
+    </div>
+    <div class="sticker-wrap">
+      <div class="sticker-count-row">
+        <div class="sticker-count-num" id="stickerNum">0</div>
+        <div class="sticker-count-total">개 누적</div>
+      </div>
+      <div class="sticker-grid" id="stickerGrid"></div>
+      <div class="reward-next" id="rewardNext"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 하단 탭바 -->
+<div class="tabbar">
+  <button class="tab-btn active" id="tab-today" onclick="switchTab('today')">
+    <span class="tab-label">오늘</span>
+  </button>
+  <button class="tab-btn" id="tab-record" onclick="switchTab('record')">
+    <span class="tab-label">기록</span>
+  </button>
+  <button class="tab-btn" id="tab-math" onclick="switchTab('math')">
+    <span class="tab-label">수학</span>
+  </button>
+</div>
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 데이터 ──────────────────────────────────────
+const SCHEDULE = [
+  { time: '09:00', name: '하루 계획 쓰기' },
+  { time: '09:15', name: '수학 공부' },
+  { time: '10:15', name: '휴식' },
+  { time: '10:30', name: '국어 / 독서' },
+  { time: '11:30', name: '점심 + 자유시간' },
+  { time: '12:30', name: '과학 / 복습' },
+  { time: '13:30', name: '링피트 1시간' },
+  { time: '14:30', name: '오늘 한 줄 기록' },
+  { time: '15:00', name: '끝!' },
+];
+
+const DEFAULT_CHECKS = [
+  { id: 'math', label: '수학' },
+  { id: 'korean', label: '국어' },
+  { id: 'science', label: '과학' },
+  { id: 'ringfit', label: '링피트 1시간' },
+];
+
+function getChecks() {
+  return S.get('check_items') || DEFAULT_CHECKS;
+}
+
+function saveChecks(items) {
+  S.set('check_items', items);
+}
+
+function addCheckItem() {
+  const input = document.getElementById('checkAddInput');
+  const label = input.value.trim();
+  if (!label) return;
+  const items = getChecks();
+  const id = 'custom_' + Date.now();
+  items.push({ id, label });
+  saveChecks(items);
+  input.value = '';
+  initChecklist();
+  showToast('추가됐어 ✓');
+}
+
+function deleteCheckItem(id) {
+  const items = getChecks().filter(c => c.id !== id);
+  saveChecks(items);
+  // 오늘 체크 상태에서도 제거
+  const key = 'checks_' + todayKey();
+  const saved = S.get(key) || {};
+  delete saved[id];
+  S.set(key, saved);
+  initChecklist();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.activeElement.id === 'checkAddInput') addCheckItem();
+});
+
+const DEFAULT_ROADMAP = [
+  { step: 1, title: '분수 약분 / 통분', period: '6월', goal: 10 },
+  { step: 2, title: '소수·분수 사칙연산', period: '7월', goal: 10 },
+  { step: 3, title: '비율·비례식', period: '8월', goal: 10 },
+  { step: 4, title: '정수·유리수', period: '9월', goal: 10 },
+  { step: 5, title: '일차방정식', period: '10월', goal: 10 },
+  { step: 6, title: '함수·좌표', period: '11월', goal: 10 },
+  { step: 7, title: '총복습 + 실전', period: '12월~2월', goal: 10 },
+];
+
+function getRoadmap() {
+  return S.get('roadmap_items') || DEFAULT_ROADMAP;
+}
+
+function saveRoadmap(items) {
+  S.set('roadmap_items', items);
+}
+
+function addRoadmapStep() {
+  const titleEl = document.getElementById('roadmapTitleInput');
+  const periodEl = document.getElementById('roadmapPeriodInput');
+  const title = titleEl.value.trim();
+  const period = periodEl.value.trim();
+  if (!title) { showToast('단원 이름을 입력해줘'); return; }
+  const items = getRoadmap();
+  const newStep = items.length + 1;
+  items.push({ step: newStep, title, period: period || '', goal: 10 });
+  saveRoadmap(items);
+  titleEl.value = '';
+  periodEl.value = '';
+  renderRoadmap();
+  showToast('추가됐어 ✓');
+}
+
+function deleteRoadmapStep(step) {
+  let items = getRoadmap().filter(r => r.step !== step);
+  // step 번호 재정렬
+  items = items.map((r, i) => ({ ...r, step: i + 1 }));
+  saveRoadmap(items);
+  // 현재 단계 보정
+  const cur = S.get('math_current_step') || 1;
+  if (cur > items.length) S.set('math_current_step', Math.max(1, items.length));
+  renderRoadmap();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.activeElement.id === 'roadmapTitleInput') {
+    document.getElementById('roadmapPeriodInput').focus();
+  } else if (e.key === 'Enter' && document.activeElement.id === 'roadmapPeriodInput') {
+    addRoadmapStep();
+  }
+});
+
+const REWARD_PER = 10; // 10개마다 만원
+
+// 2026~2027 한국 공휴일
+const HOLIDAYS = new Set([
+  // 2026
+  '2026-01-01', // 신정
+  '2026-01-28','2026-01-29','2026-01-30', // 설날 연휴
+  '2026-03-01', // 삼일절
+  '2026-05-05', // 어린이날
+  '2026-05-15', // 부처님오신날
+  '2026-06-06', // 현충일
+  '2026-06-08', // 지방선거 (예정)
+  '2026-08-15', // 광복절
+  '2026-09-24','2026-09-25','2026-09-26', // 추석 연휴
+  '2026-10-03', // 개천절
+  '2026-10-09', // 한글날
+  '2026-12-25', // 크리스마스
+  // 2027
+  '2027-01-01', // 신정
+  '2027-02-15','2027-02-16','2027-02-17', // 설날 연휴
+  '2027-03-01', // 삼일절
+  '2027-05-05', // 어린이날
+  '2027-05-03', // 부처님오신날
+  '2027-06-06', // 현충일
+  '2027-08-15', // 광복절
+  '2027-10-03', // 개천절
+  '2027-10-09', // 한글날
+  '2027-12-25', // 크리스마스
+]);
+
+function isSchoolDay(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  const dow = d.getDay();
+  if (dow === 0 || dow === 6) return false; // 주말
+  if (HOLIDAYS.has(dateStr)) return false;  // 공휴일
+  return true;
+}
+
+// ── 스토리지 ─────────────────────────────────────
+const S = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+};
+
+const todayKey = () => new Date().toISOString().slice(0, 10);
+
+// ── 날짜 유틸 ────────────────────────────────────
+const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+const now = new Date();
+
+function formatDate(d) {
+  return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+}
+
+// ── 헤더 날짜 ────────────────────────────────────
+function initHeader() {
+  const d = now;
+  document.getElementById('headerDate').textContent =
+    `${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()}`;
+  document.getElementById('todayWeekday').textContent =
+    WEEKDAYS[d.getDay()] + '요일';
+  document.getElementById('todayDateBig').textContent =
+    `${d.getMonth()+1}월 ${d.getDate()}일`;
+}
+
+// ── 시간표 ───────────────────────────────────────
+function initSchedule() {
+  const nowH = now.getHours() * 60 + now.getMinutes();
+  const el = document.getElementById('scheduleList');
+  el.innerHTML = SCHEDULE.map(s => {
+    const [h, m] = s.time.split(':').map(Number);
+    const sMin = h * 60 + m;
+    const isActive = Math.abs(sMin - nowH) < 90;
+    return `<div class="schedule-row">
+      <span class="schedule-time">${s.time}</span>
+      <span class="schedule-dot ${isActive ? 'active' : ''}"></span>
+      <span class="schedule-name">${s.name}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── 체크리스트 ───────────────────────────────────
+function initChecklist() {
+  const key = 'checks_' + todayKey();
+  const saved = S.get(key) || {};
+  const items = getChecks();
+  const el = document.getElementById('checklist');
+  el.innerHTML = items.map(c => {
+    const done = !!saved[c.id];
+    const isDeletable = c.id.startsWith('custom_') || !DEFAULT_CHECKS.find(d => d.id === c.id);
+    return `<div class="check-item ${done ? 'done' : ''}">
+      <div class="check-box ${done ? 'checked' : ''}" onclick="toggleCheck('${c.id}')"></div>
+      <span class="check-label" onclick="toggleCheck('${c.id}')">${c.label}</span>
+      <button class="check-delete" onclick="deleteCheckItem('${c.id}')" aria-label="삭제">×</button>
+    </div>`;
+  }).join('');
+}
+
+function toggleCheck(id) {
+  const key = 'checks_' + todayKey();
+  const saved = S.get(key) || {};
+  saved[id] = !saved[id];
+  S.set(key, saved);
+  initChecklist();
+  // 전부 완료시 스티커 +1
+  if (getChecks().every(c => saved[c.id])) {
+    const today = todayKey();
+    const rewarded = S.get('rewarded_' + today);
+    if (!rewarded) {
+      addSticker();
+      S.set('rewarded_' + today, true);
+      showToast('🌟 체크리스트 완성! 스티커 +1');
+    }
+  }
+}
+
+// ── 메모 ─────────────────────────────────────────
+function initMemo() {
+  const key = 'memo_' + todayKey();
+  const saved = S.get(key) || '';
+  document.getElementById('memoInput').value = saved;
+}
+
+function saveMemo() {
+  const val = document.getElementById('memoInput').value.trim();
+  if (!val) return;
+  const key = 'memo_' + todayKey();
+  S.set(key, val);
+  // 기록 목록에도 저장
+  const records = S.get('records') || {};
+  records[todayKey()] = val;
+  S.set('records', records);
+  showToast('저장됐어 ✓');
+  renderRecordList();
+  renderCalendar();
+}
+
+// ── 달력 ─────────────────────────────────────────
+let calYear = now.getFullYear();
+let calMonth = now.getMonth();
+
+function changeMonth(d) {
+  calMonth += d;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const records = S.get('records') || {};
+  document.getElementById('calMonthLabel').textContent =
+    `${calYear}년 ${calMonth + 1}월`;
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const lastDate = new Date(calYear, calMonth + 1, 0).getDate();
+  const todayStr = todayKey();
+
+  const labels = ['일', '월', '화', '수', '목', '금', '토'];
+  let html = labels.map(l => `<div class="cal-day-label">${l}</div>`).join('');
+
+  for (let i = 0; i < firstDay; i++) {
+    html += `<div class="cal-day empty"></div>`;
+  }
+  for (let d = 1; d <= lastDate; d++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isDone = !!records[dateStr];
+    const isToday = dateStr === todayStr;
+    const isOff = !isSchoolDay(dateStr);
+    html += `<div class="cal-day ${isDone?'done':''} ${isToday?'today':''} ${isOff?'off':''}">${d}</div>`;
+  }
+  document.getElementById('calGrid').innerHTML = html;
+}
+
+// ── 기록 목록 ────────────────────────────────────
+function renderRecordList() {
+  const records = S.get('records') || {};
+  const el = document.getElementById('recordList');
+  const sorted = Object.entries(records).sort((a,b) => b[0].localeCompare(a[0])).slice(0, 20);
+  if (!sorted.length) {
+    el.innerHTML = `<div style="padding:20px 0;text-align:center;color:var(--text-hint);font-size:13px">아직 기록이 없어. 오늘 탭에서 첫 줄 써봐!</div>`;
+    return;
+  }
+  el.innerHTML = sorted.map(([date, text]) => {
+    const d = new Date(date);
+    const label = `${d.getMonth()+1}.${d.getDate()}`;
+    return `<div class="record-item">
+      <span class="record-date">${label}</span>
+      <div class="record-dot"></div>
+      <span class="record-text">${text}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── 로드맵 ───────────────────────────────────────
+function renderRoadmap(editingStep = null) {
+  const currentStep = S.get('math_current_step') || 1;
+  const doneSteps = S.get('math_done_steps') || [];
+  const items = getRoadmap();
+  const el = document.getElementById('roadmapList');
+
+  el.innerHTML = items.map(r => {
+    const isDone = doneSteps.includes(r.step);
+    const isCurrent = r.step === currentStep && !isDone;
+    const cls = isDone ? 'done' : (isCurrent ? 'current' : '');
+    const isEditing = r.step === editingStep;
+
+    if (isEditing) {
+      return `<div class="roadmap-item">
+        <div class="roadmap-step ${cls}">${r.step}</div>
+        <div class="roadmap-info" style="gap:2px">
+          <input class="roadmap-title-input" id="edit-title-${r.step}"
+            value="${r.title}"
+            onkeydown="if(event.key==='Enter')saveRoadmapEdit(${r.step})"
+            onblur="saveRoadmapEdit(${r.step})">
+          <input class="roadmap-period-edit" id="edit-period-${r.step}"
+            value="${r.period}"
+            placeholder="기간"
+            onkeydown="if(event.key==='Enter')saveRoadmapEdit(${r.step})"
+            onblur="saveRoadmapEdit(${r.step})">
+        </div>
+        <button class="roadmap-edit-btn" onclick="deleteRoadmapStep(${r.step})" aria-label="삭제">×</button>
+      </div>`;
+    }
+
+    return `<div class="roadmap-item">
+      <div class="roadmap-step ${cls}" onclick="toggleRoadmapStep(${r.step})">${r.step}</div>
+      <div class="roadmap-info" onclick="startEditRoadmap(${r.step})" style="cursor:pointer">
+        <div class="roadmap-title ${!isCurrent && !isDone ? 'dim' : ''}">${r.title}</div>
+        <div class="roadmap-period">${r.period || '기간 없음'}</div>
+      </div>
+      ${isDone ? '<span class="roadmap-check">✓</span>' : ''}
+      <button class="roadmap-edit-btn" onclick="deleteRoadmapStep(${r.step})" aria-label="삭제">×</button>
+    </div>`;
+  }).join('');
+
+  // 편집 모드 진입 시 포커스
+  if (editingStep) {
+    const input = document.getElementById(`edit-title-${editingStep}`);
+    if (input) { input.focus(); input.select(); }
+  }
+
+  const cur = items.find(r => r.step === currentStep) || items[0];
+  document.getElementById('currentBookLabel').textContent =
+    cur ? `${cur.step}단계 · ${cur.title}` : '';
+  renderProgressBar();
+}
+
+function startEditRoadmap(step) {
+  renderRoadmap(step);
+}
+
+function saveRoadmapEdit(step) {
+  const titleEl = document.getElementById(`edit-title-${step}`);
+  const periodEl = document.getElementById(`edit-period-${step}`);
+  if (!titleEl) return;
+  const title = titleEl.value.trim();
+  const period = periodEl ? periodEl.value.trim() : '';
+  if (!title) return;
+  const items = getRoadmap().map(r =>
+    r.step === step ? { ...r, title, period } : r
+  );
+  saveRoadmap(items);
+  renderRoadmap();
+}
+
+function toggleRoadmapStep(step) {
+  const done = S.get('math_done_steps') || [];
+  const idx = done.indexOf(step);
+  const items = getRoadmap();
+  if (idx >= 0) {
+    done.splice(idx, 1);
+  } else {
+    done.push(step);
+    const nextStep = Math.min(step + 1, items.length);
+    S.set('math_current_step', nextStep);
+    showToast(`${step}단계 완료! 🎉`);
+    addSticker();
+  }
+  S.set('math_done_steps', done);
+  renderRoadmap();
+}
+
+// ── 문제집 진도 ──────────────────────────────────
+function getGoal(step) {
+  const items = getRoadmap();
+  const r = items.find(i => i.step === step);
+  // 로드맵에 저장된 goal 우선, 없으면 50
+  return (r && r.goal) ? r.goal : 10;
+}
+
+function saveGoal(step, goal) {
+  const items = getRoadmap().map(r =>
+    r.step === step ? { ...r, goal } : r
+  );
+  saveRoadmap(items);
+}
+
+function renderProgressBar(editGoal = false) {
+  const currentStep = S.get('math_current_step') || 1;
+  const goal = getGoal(currentStep);
+  const logs = S.get('page_logs') || [];
+  const stepLogs = logs.filter(l => l.step === currentStep);
+  const total = stepLogs.reduce((s, l) => s + l.pages, 0);
+  const pct = Math.min((total / goal) * 100, 100);
+
+  document.getElementById('progressText').textContent = `누적 ${total}p`;
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  const goalEl = document.getElementById('progressGoal');
+  if (editGoal) {
+    goalEl.innerHTML = `목표 <input class="goal-edit-input" id="goalInput"
+      type="number" min="1" max="9999" value="${goal}"
+      onblur="commitGoal()"
+      onkeydown="if(event.key==='Enter')commitGoal()">p`;
+    const inp = document.getElementById('goalInput');
+    if (inp) { inp.focus(); inp.select(); }
+  } else {
+    goalEl.innerHTML = `<span onclick="renderProgressBar(true)" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px">목표 ${goal}p</span>`;
+  }
+
+  // 로그 최근 5개
+  const el = document.getElementById('pageLog');
+  const recent = [...stepLogs].reverse().slice(0, 5);
+  if (!recent.length) { el.innerHTML = ''; return; }
+  el.innerHTML = recent.map(l => {
+    const d = new Date(l.date);
+    return `<div class="page-log-item">
+      <span>${d.getMonth()+1}.${d.getDate()}</span>
+      <span class="page-log-val">+${l.pages}p</span>
+    </div>`;
+  }).join('');
+}
+
+function commitGoal() {
+  const inp = document.getElementById('goalInput');
+  if (!inp) return;
+  const val = parseInt(inp.value);
+  if (!val || val <= 0) { renderProgressBar(); return; }
+  const currentStep = S.get('math_current_step') || 1;
+  saveGoal(currentStep, val);
+  renderProgressBar();
+  showToast(`목표 ${val}p 저장 ✓`);
+}
+
+function savePages() {
+  const input = document.getElementById('pageInput');
+  const pages = parseInt(input.value);
+  if (!pages || pages <= 0) { showToast('쪽수를 입력해줘'); return; }
+  const currentStep = S.get('math_current_step') || 1;
+  const logs = S.get('page_logs') || [];
+  logs.push({ step: currentStep, pages, date: new Date().toISOString() });
+  S.set('page_logs', logs);
+  input.value = '';
+  renderProgressBar();
+  showToast(`${pages}쪽 기록 완료 ✓`);
+}
+
+// ── 스티커 ───────────────────────────────────────
+function addSticker() {
+  const count = (S.get('sticker_count') || 0) + 1;
+  S.set('sticker_count', count);
+  renderStickers();
+}
+
+function renderStickers() {
+  const count = S.get('sticker_count') || 0;
+  const current = count % REWARD_PER; // 현재 사이클 내 개수
+  const earned = Math.floor(count / REWARD_PER); // 받은 만원 수
+  const left = REWARD_PER - current;
+
+  document.getElementById('stickerNum').textContent = count;
+
+  const grid = document.getElementById('stickerGrid');
+  let html = '';
+  for (let i = 0; i < REWARD_PER; i++) {
+    html += i < current
+      ? `<div class="sticker-cell">⭐</div>`
+      : `<div class="sticker-cell empty"></div>`;
+  }
+  grid.innerHTML = html;
+
+  const el = document.getElementById('rewardNext');
+  if (left > 0) {
+    el.innerHTML = `
+      <div class="reward-icon">💵</div>
+      <div class="reward-info">
+        <div class="reward-label">${left}개 더 모으면</div>
+        <div class="reward-desc">만원 ${earned > 0 ? `(지금까지 ${earned}번 달성!)` : ''}</div>
+      </div>`;
+  } else {
+    el.innerHTML = `<div class="reward-icon">🎉</div><div class="reward-info"><div class="reward-label">만원 달성!</div><div class="reward-desc">엄마한테 말해봐</div></div>`;
+  }
+}
+
+// ── 탭 전환 ──────────────────────────────────────
+function switchTab(name) {
+  ['today', 'record', 'math'].forEach(t => {
+    document.getElementById('screen-' + t).classList.toggle('active', t === name);
+    document.getElementById('tab-' + t).classList.toggle('active', t === name);
+  });
+  if (name === 'record') { renderCalendar(); renderRecordList(); }
+  if (name === 'math') { renderRoadmap(); renderStickers(); }
+}
+
+// ── 토스트 ───────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// ── 미완료 페널티 ─────────────────────────────────
+function checkPenalty() {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yKey = yesterday.toISOString().slice(0, 10);
+  const penaltyKey = 'penalty_' + yKey;
+
+  // 이미 처리했으면 패스
+  if (S.get(penaltyKey)) return;
+
+  // 주말·공휴일은 페널티 없음
+  if (!isSchoolDay(yKey)) {
+    S.set(penaltyKey, true);
+    return;
+  }
+
+  const yChecks = S.get('checks_' + yKey) || {};
+  const yItems = S.get('check_items') || DEFAULT_CHECKS;
+
+  const hasAny = Object.keys(yChecks).length > 0;
+  const allDone = yItems.every(c => yChecks[c.id]);
+
+  if (hasAny && !allDone) {
+    const incomplete = yItems.filter(c => !yChecks[c.id]);
+    const penalty = incomplete.length;
+    const cur = S.get('sticker_count') || 0;
+    S.set('sticker_count', Math.max(0, cur - penalty));
+    S.set(penaltyKey, penalty);
+    setTimeout(() => showToast(`어제 ${penalty}개 미완료 → 스티커 -${penalty} ⚠️`), 800);
+  } else if (!hasAny) {
+    const cur = S.get('sticker_count') || 0;
+    S.set('sticker_count', Math.max(0, cur - 1));
+    S.set(penaltyKey, 1);
+    setTimeout(() => showToast('어제 기록 없음 → 스티커 -1 ⚠️'), 800);
+  }
+
+  S.set(penaltyKey, true);
+}
+
+// ── 초기화 ───────────────────────────────────────
+checkPenalty();
+initHeader();
+initSchedule();
+initChecklist();
+initMemo();
+renderCalendar();
+renderRecordList();
+renderRoadmap();
+renderStickers();
+</script>
+</body>
+</html>
